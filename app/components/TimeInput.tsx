@@ -9,9 +9,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-function TimeInput() {
-  const [hour, setHour] = useState("00");
-  const [minute, setMinute] = useState("00");
+interface TimeInputProps {
+  startHour: string;
+  setStartHour: (hour: string) => void;
+  startMinute: string;
+  setStartMinute: (minute: string) => void;
+  endHour: string;
+  setEndHour: (hour: string) => void;
+  endMinute: string;
+  setEndMinute: (minute: string) => void;
+}
+
+const TimeInput: React.FC<TimeInputProps> = ({
+  startHour,
+  setStartHour,
+  startMinute,
+  setStartMinute,
+  endHour,
+  setEndHour,
+  endMinute,
+  setEndMinute,
+}) => {
+  // Your existing implementation, now directly using the props
 
   // Generate options for hours (00-23)
   const hours = Array.from({ length: 24 }, (_, index) =>
@@ -44,7 +63,10 @@ function TimeInput() {
           </DropdownMenuContent>
         </DropdownMenu> */}
         <div className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-          <select value={hour} onChange={(e) => setHour(e.target.value)}>
+          <select
+            value={startHour}
+            onChange={(e) => setStartHour(e.target.value)}
+          >
             {hours.map((h) => (
               <option key={h} value={h}>
                 {h}
@@ -52,7 +74,10 @@ function TimeInput() {
             ))}
           </select>
           :
-          <select value={minute} onChange={(e) => setMinute(e.target.value)}>
+          <select
+            value={startMinute}
+            onChange={(e) => setStartMinute(e.target.value)}
+          >
             {minutes.map((m) => (
               <option key={m} value={m}>
                 {m}
@@ -64,7 +89,7 @@ function TimeInput() {
       <div className="flex flex-col">
         <Label htmlFor="time">Until</Label>
         <div className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-          <select value={hour} onChange={(e) => setHour(e.target.value)}>
+          <select value={endHour} onChange={(e) => setEndHour(e.target.value)}>
             {hours.map((h) => (
               <option key={h} value={h}>
                 {h}
@@ -72,7 +97,10 @@ function TimeInput() {
             ))}
           </select>
           :
-          <select value={minute} onChange={(e) => setMinute(e.target.value)}>
+          <select
+            value={endMinute}
+            onChange={(e) => setEndMinute(e.target.value)}
+          >
             {minutes.map((m) => (
               <option key={m} value={m}>
                 {m}
@@ -83,6 +111,6 @@ function TimeInput() {
       </div>
     </div>
   );
-}
+};
 
 export default TimeInput;

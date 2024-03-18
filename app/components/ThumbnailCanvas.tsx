@@ -21,6 +21,21 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasInstance = useRef<fabric.Canvas | null>(null);
   const [overlayOpacity, setOverlayOpacity] = useState<number>(0); // Controls the overlay for darkness
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false); // New state to track image load status
+
+  // Define bringTextToFront using a ref to ensure the function's reference is stable
+  const bringTextToFrontRef = useRef<(() => void) | null>(null); // Update the type of bringTextToFrontRef
+
+  bringTextToFrontRef.current = () => {
+    const canvas = canvasInstance.current;
+    if (!canvas) return;
+
+    const texts = canvas.getObjects("text");
+    texts.forEach((text) => {
+      canvas.bringToFront(text);
+    });
+    canvas.renderAll();
+  };
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -63,6 +78,13 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
           lockRotation: true,
         });
 
+        // Use the function ref in the event listener
+        const moveHandler = () =>
+          bringTextToFrontRef.current && bringTextToFrontRef.current();
+        img.on("moved", moveHandler);
+
+        setImageLoaded(true); // Set the image load status to true
+
         URL.revokeObjectURL(objectURL);
       },
       { crossOrigin: "anonymous" }
@@ -75,12 +97,13 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
 
   useEffect(() => {
     const canvas = canvasInstance.current;
-    if (!canvas) return;
+    if (!canvas || !imageLoaded) return; // Check if the image is loaded before proceeding
 
-    const overlay = canvas.getObjects().find((obj) => obj.type === "rect");
-    if (overlay) {
-      overlay.set({ opacity: overlayOpacity });
-    }
+    // OPACITY FUNCTION
+    // const overlay = canvas.getObjects().find((obj) => obj.type === "rect");
+    // if (overlay) {
+    //   overlay.set({ opacity: overlayOpacity });
+    // }
 
     // Remove existing text/date objects
     const texts = canvas.getObjects("text");
@@ -95,6 +118,7 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
         top: 10,
       });
       canvas.add(textObj);
+      textObj.bringToFront(); // Ensure text is on top
     }
 
     // Add or update date
@@ -107,10 +131,11 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
         top: 35,
       });
       canvas.add(dateObj);
+      dateObj.bringToFront();
     }
 
     canvas.renderAll();
-  }, [text, date, overlayOpacity]);
+  }, [text, date, overlayOpacity, imageLoaded]);
 
   const handleDownload = () => {
     const canvas = canvasInstance.current;

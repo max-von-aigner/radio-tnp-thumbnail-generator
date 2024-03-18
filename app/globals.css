@@ -78,3 +78,15 @@
 canvas {
   @apply border-2 border-gray-300; /* Example border */
 }
+
+@font-face {
+  font-family: "Alte Haas Grotesk";
+  src: url("/fonts/AlteHaasGroteskBold.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Apply globally or to specific elements as needed */
+body {
+  font-family: "Alte Haas Grotesk", sans-serif;
+}

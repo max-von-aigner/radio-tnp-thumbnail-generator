@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import ImageUpload from "./ImageUpload";
-import ThumbnailCanvas from "./ThumbnailCanvas";
-import ShowTitleInput from "./ShowNameInput";
-import { DatePicker } from "./DatePicker";
-import TimeInput from "./TimeInput";
-import AlphaThumbnailCanvas from "./AlphaThumbnailCanvas";
+import ImageUpload from "../components/ImageUpload";
+import ThumbnailCanvas from "../components/AlphaThumbnailCanvas";
+import ShowTitleInput from "../components/ShowNameInput";
+import { DatePicker } from "../components/DatePicker";
+import TimeInput from "../components/TimeInput";
 
 const ThumbnailGenerator = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -14,8 +13,10 @@ const ThumbnailGenerator = () => {
   const [text, setText] = useState<string>("");
   // In ThumbnailGenerator component
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [hour, setHour] = useState("00");
-  const [minute, setMinute] = useState("00");
+  const [startHour, setStartHour] = useState("00");
+  const [startMinute, setStartMinute] = useState("00");
+  const [endHour, setEndHour] = useState("00");
+  const [endMinute, setEndMinute] = useState("00");
 
   return (
     <div className="flex ">
@@ -30,26 +31,27 @@ const ThumbnailGenerator = () => {
           setDateExternal={setSelectedDate as (date: Date | undefined) => void}
         ></DatePicker>
         <TimeInput
-          hour={hour}
-          setHour={setHour}
-          minute={minute}
-          setMinute={setMinute}
-        />
+          startHour={startHour}
+          setStartHour={setStartHour}
+          startMinute={startMinute}
+          setStartMinute={setStartMinute}
+          endHour={endHour}
+          setEndHour={setEndHour}
+          endMinute={endMinute}
+          setEndMinute={setEndMinute}
+        ></TimeInput>
       </div>
       <div>
         {imageFile && (
-          // <ThumbnailCanvas
-          //   imageFile={imageFile}
-          //   text={text}
-          //   date={selectedDate}
-          // />
-          <AlphaThumbnailCanvas
+          <ThumbnailCanvas
             imageFile={imageFile}
             text={text}
             date={selectedDate}
-            hour={hour}
-            minute={minute}
-          ></AlphaThumbnailCanvas>
+            startHour={startHour}
+            startMinute={startMinute}
+            endHour={endHour}
+            endMinute={endMinute}
+          />
         )}
       </div>
     </div>
