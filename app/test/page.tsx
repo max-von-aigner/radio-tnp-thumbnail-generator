@@ -3,14 +3,17 @@
 import React, { useState } from "react";
 import ImageUpload from "../components/ImageUpload";
 import ThumbnailCanvas from "../components/AlphaThumbnailCanvas";
-import ShowTitleInput from "../components/ShowNameInput";
+import ShowTitleInput from "../components/MainTitleInput";
 import { DatePicker } from "../components/DatePicker";
 import TimeInput from "../components/TimeInput";
+import SubTitleInput from "../components/SubTitleInput";
 
 const ThumbnailGenerator = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   //   const [text, setText] = useState<string>(" ");
-  const [text, setText] = useState<string>("");
+
+  const [mainText, setMainText] = useState<string>("");
+  const [subText, setSubText] = useState<string>("");
   // In ThumbnailGenerator component
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [startHour, setStartHour] = useState("00");
@@ -24,8 +27,9 @@ const ThumbnailGenerator = () => {
         {/* Component to upload an image */}
         <ImageUpload setImageFile={setImageFile} />
         {/* Component to input text */}
-        <ShowTitleInput text={text} setText={setText} />
+        <ShowTitleInput text={mainText} setText={setMainText} />
         {/* Component to display the thumbnail canvas */}
+        <SubTitleInput text={subText} setText={setSubText} />
 
         <DatePicker
           setDateExternal={setSelectedDate as (date: Date | undefined) => void}
@@ -45,7 +49,8 @@ const ThumbnailGenerator = () => {
         {imageFile && (
           <ThumbnailCanvas
             imageFile={imageFile}
-            text={text}
+            mainText={mainText}
+            subText={subText}
             date={selectedDate}
             startHour={startHour}
             startMinute={startMinute}

@@ -4,15 +4,12 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface ResidentNameInputProps {
+interface SubTitleInputProps {
   text: string;
   setText: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ResidentNameInput: React.FC<ResidentNameInputProps> = ({
-  text,
-  setText,
-}) => {
+const SubTitleInput: React.FC<SubTitleInputProps> = ({ text, setText }) => {
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setText(event.target.value);
   };
@@ -31,4 +28,4 @@ const ResidentNameInput: React.FC<ResidentNameInputProps> = ({
   );
 };
 
-export default ResidentNameInput;
+export default SubTitleInput;

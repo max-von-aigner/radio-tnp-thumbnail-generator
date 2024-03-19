@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
 import ThumbnailCanvas from "./ThumbnailCanvas";
-import ShowNameInput from "./ShowNameInput";
+import ShowNameInput from "./MainTitleInput";
 
 // const ImageUpload = () => {
 //   const [selectedFile, setSelectedFile] = useState<File | null>(null);

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import { format } from "date-fns";
+import useFontLoaded from "../hooks/useFontLoaded";
 
 interface ButtonProps {
   variant: string;
@@ -16,7 +17,8 @@ const Button: React.FC<ButtonProps> = ({ variant, onClick, children }) => (
 
 interface ThumbnailCanvasProps {
   imageFile: File;
-  text: string | null;
+  mainText: string | null;
+  subText: string | null;
   date: Date | null;
   startHour: string;
   startMinute: string;
@@ -26,7 +28,8 @@ interface ThumbnailCanvasProps {
 
 const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
   imageFile,
-  text,
+  mainText,
+  subText,
   date,
   startHour,
   startMinute,
@@ -35,24 +38,13 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasInstance = useRef<fabric.Canvas | null>(null);
+  const fontLoaded = useFontLoaded(
+    "Alte Haas Grotesk",
+    "/fonts/AlteHaasGroteskBold.ttf"
+  );
 
   useEffect(() => {
-    // Load the custom font
-    const font = new FontFace(
-      "Alte Haas Grotesk",
-      `url(/fonts/AlteHaasGroteskBold.ttf)`
-    );
-
-    font
-      .load()
-      .then((loadedFont) => {
-        document.fonts.add(loadedFont);
-      })
-      .catch((error) => {
-        console.error("Font loading failed:", error);
-      });
-
-    if (!canvasRef.current) return;
+    if (!fontLoaded || !canvasRef.current) return;
     const canvas = new fabric.Canvas(canvasRef.current, {
       selection: false,
     });
@@ -86,7 +78,7 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
         canvasInstance.current.dispose();
       }
     };
-  }, [imageFile]);
+  }, [fontLoaded, imageFile]);
 
   useEffect(() => {
     if (!canvasInstance.current) return;
@@ -106,8 +98,8 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
     });
 
     // Add main text at the bottom left
-    if (text) {
-      const textObj = new fabric.Text(text, {
+    if (mainText) {
+      const textObj = new fabric.Text(mainText, {
         fontSize: 30,
         fill: "#fff",
         fontFamily: "Alte Haas Grotesk",
@@ -117,8 +109,20 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
       canvas.add(textObj);
     }
 
+    // Add main text at the bottom left
+    if (subText) {
+      const textObj = new fabric.Text(subText, {
+        fontSize: 30,
+        fill: "#fff",
+        fontFamily: "Alte Haas Grotesk",
+        left: 20,
+        top: canvas.getHeight() - 100, // Adjust according to your needs
+      });
+      canvas.add(textObj);
+    }
+
     // Positioning logic for Date, Time, and Separator
-    const rightPadding = 40; // Space from the right edge
+    const rightPadding = 20; // Space from the right edge
     let lastTextRightPosition = canvas.getWidth() - rightPadding;
 
     // Time Text
@@ -172,10 +176,10 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
       fill: "#ffffff",
       fontFamily: "Alte Haas Grotesk",
       // Rotate text 90 degrees clockwise
-      // angle: 90,
+      angle: 90,
       // Manually set the position; adjust these values as needed to align properly
-      left: 200, // Adjust the value '10' to position it closer to or further from the right edge
-      top: 40, // Adjust the value '30' to position it closer to or further from the date/time string
+      left: 535, // Adjust the value '10' to position it closer to or further from the right edge
+      top: 45, // Adjust the value '30' to position it closer to or further from the date/time string
     });
 
     // Since we're manually setting the position, we don't need to calculate width/height adjustments
@@ -184,7 +188,16 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
     canvas.renderAll();
 
     // ... (rest of your code remains unchanged)
-  }, [imageFile, text, date, startHour, startMinute, endHour, endMinute]);
+  }, [
+    imageFile,
+    mainText,
+    subText,
+    date,
+    startHour,
+    startMinute,
+    endHour,
+    endMinute,
+  ]);
 
   const handleDownload = () => {
     const canvas = canvasInstance.current;
