@@ -1,151 +1,216 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import { format } from "date-fns";
-
+import useFontLoaded from "../hooks/useFontLoaded";
 import { Button } from "@/components/ui/button";
-import OpacitySlider from "./OpacitySlider";
+
+// interface ButtonProps {
+//   variant: string;
+//   onClick: () => void;
+//   children: React.ReactNode;
+// }
+
+// const Button: React.FC<ButtonProps> = ({ variant, onClick, children }) => (
+//   <button onClick={onClick} className={variant}>
+//     {children}
+//   </button>
+// );
 
 interface ThumbnailCanvasProps {
   imageFile: File;
-  text: string | null;
+  mainText: string | null;
+  subText: string | null;
   date: Date | null;
+  startHour: string;
+  startMinute: string;
+  endHour: string;
+  endMinute: string;
 }
 
 const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
   imageFile,
-  text,
+  mainText,
+  subText,
   date,
+  startHour,
+  startMinute,
+  endHour,
+  endMinute,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasInstance = useRef<fabric.Canvas | null>(null);
-  const [overlayOpacity, setOverlayOpacity] = useState<number>(0); // Controls the overlay for darkness
-  const [imageLoaded, setImageLoaded] = useState<boolean>(false); // New state to track image load status
-
-  // Define bringTextToFront using a ref to ensure the function's reference is stable
-  const bringTextToFrontRef = useRef<(() => void) | null>(null); // Update the type of bringTextToFrontRef
-
-  bringTextToFrontRef.current = () => {
-    const canvas = canvasInstance.current;
-    if (!canvas) return;
-
-    const texts = canvas.getObjects("text");
-    texts.forEach((text) => {
-      canvas.bringToFront(text);
-    });
-    canvas.renderAll();
-  };
+  const fontLoaded = useFontLoaded(
+    "Alte Haas Grotesk",
+    "/fonts/AlteHaasGroteskBold.ttf"
+  );
 
   useEffect(() => {
-    if (!canvasRef.current) return;
-
+    if (!fontLoaded || !canvasRef.current) return;
     const canvas = new fabric.Canvas(canvasRef.current, {
       selection: false,
     });
     canvasInstance.current = canvas;
 
+    // Load and set the image background
     const objectURL = URL.createObjectURL(imageFile);
     fabric.Image.fromURL(
       objectURL,
       (img) => {
         const scale = Math.max(
-          canvas.getWidth() / (img.width ?? 1),
-          canvas.getHeight() / (img.height ?? 1)
+          canvas.getWidth() / img.getScaledWidth(),
+          canvas.getHeight() / img.getScaledHeight()
         );
-        // Apply scale and centering
         img.set({
+          originX: "left",
+          originY: "top",
           scaleX: scale,
           scaleY: scale,
-          left: (canvas.getWidth() - (img.width ?? 1) * scale) / 2,
-          top: (canvas.getHeight() - (img.height ?? 1) * scale) / 2,
-          originX: "center",
-          originY: "center",
-          // Make the image selectable and movable
-          selectable: true,
-          evented: true,
         });
-
-        // Instead of setting it as a background, add it to the canvas directly
-        canvas.add(img);
-        // Send the image to the back so it acts as a background
-        img.moveTo(0);
-
-        // Optional: lock scaling and rotation if you only want the image to be movable
-        img.set({
-          lockScalingX: true,
-          lockScalingY: true,
-          lockRotation: true,
+        canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+          crossOrigin: "anonymous",
         });
-
-        // Use the function ref in the event listener
-        const moveHandler = () =>
-          bringTextToFrontRef.current && bringTextToFrontRef.current();
-        img.on("moved", moveHandler);
-
-        setImageLoaded(true); // Set the image load status to true
-
         URL.revokeObjectURL(objectURL);
       },
       { crossOrigin: "anonymous" }
     );
 
     return () => {
-      canvas.dispose();
+      if (canvasInstance.current) {
+        canvasInstance.current.dispose();
+      }
     };
-  }, [imageFile]);
+  }, [fontLoaded, imageFile]);
 
   useEffect(() => {
+    if (!canvasInstance.current) return;
     const canvas = canvasInstance.current;
-    if (!canvas || !imageLoaded) return; // Check if the image is loaded before proceeding
 
-    // OPACITY FUNCTION
-    // const overlay = canvas.getObjects().find((obj) => obj.type === "rect");
-    // if (overlay) {
-    //   overlay.set({ opacity: overlayOpacity });
-    // }
+    // Clear existing texts to avoid duplicates
+    canvas.getObjects("text").forEach((obj) => canvas.remove(obj));
 
-    // Remove existing text/date objects
-    const texts = canvas.getObjects("text");
-    texts.forEach((text) => canvas.remove(text));
+    // Calculate positions based on whether subText is provided
+    const mainTextTop = canvas.getHeight() - (subText ? 72 : 50); // Move main text up if subText is provided
+    const subTextTop = canvas.getHeight() - 40; // Subtext position
 
-    // Add or update text
-    if (text) {
-      const textObj = new fabric.Text(text, {
-        fontSize: 20,
+    // Load and add the logo SVG at the top left
+    fabric.Image.fromURL("tnpLogo.svg", (img) => {
+      img.scaleToWidth(90); // Adjust as needed
+      img.set({
+        left: 20,
+        top: 20,
+      });
+      canvas.add(img);
+    });
+
+    // Add main text at the bottom left
+    if (mainText) {
+      const textObj = new fabric.Text(mainText, {
+        fontSize: 30,
         fill: "#fff",
-        left: 10,
-        top: 10,
+        fontFamily: "Alte Haas Grotesk",
+        left: 20,
+        top: mainTextTop, // Adjust according to your needs
       });
       canvas.add(textObj);
-      textObj.bringToFront(); // Ensure text is on top
     }
 
-    // Add or update date
-    if (date) {
-      const formattedDate = format(date, "PPP");
-      const dateObj = new fabric.Text(formattedDate, {
-        fontSize: 20,
+    // Add main text at the bottom left
+    if (subText) {
+      const textObj = new fabric.Text(subText, {
+        fontSize: 18,
         fill: "#fff",
-        left: 10,
-        top: 35,
+        fontFamily: "Alte Haas Grotesk",
+        left: 20,
+        top: subTextTop, // Adjust according to your needs
       });
-      canvas.add(dateObj);
-      dateObj.bringToFront();
+      canvas.add(textObj);
     }
+
+    // Positioning logic for Date, Time, and Separator
+    const rightPadding = 20; // Space from the right edge
+    let lastTextRightPosition = canvas.getWidth() - rightPadding;
+
+    // Time Text
+    if (startHour && startMinute && endHour && endMinute) {
+      const timeString = `${startHour}:${startMinute}-${endHour}:${endMinute}`;
+      const timeText = new fabric.Text(timeString, {
+        fontSize: 18,
+        fill: "#ffffff",
+        fontFamily: "Alte Haas Grotesk",
+        top: 20, // Adjust top position as needed
+      });
+      canvas.add(timeText);
+      timeText.set({
+        left: lastTextRightPosition - (timeText.width || 0),
+      });
+      lastTextRightPosition -= (timeText.width || 0) + 5; // Adjust space between elements
+    }
+
+    // Separator
+    const separator = new fabric.Text("|", {
+      fontSize: 18,
+      fill: "#ffffff",
+      fontFamily: "Alte Haas Grotesk",
+      top: 20, // Align vertically with the date and time
+    });
+    canvas.add(separator);
+    separator.set({
+      left: lastTextRightPosition - (separator.width ?? 0),
+    });
+    lastTextRightPosition -= (separator.width ?? 0) + 5;
+
+    // Date
+    if (date) {
+      const formattedDate = format(date, "dd.MM");
+      const dateText = new fabric.Text(formattedDate, {
+        fontSize: 18,
+        fill: "#ffffff",
+        fontFamily: "Alte Haas Grotesk",
+        top: 20, // Align vertically with the time
+      });
+      canvas.add(dateText);
+      dateText.set({
+        left: lastTextRightPosition - (dateText.width ?? 0),
+      });
+    }
+
+    // Static text below the date and time, rotated 90 degrees counter-clockwise
+    const staticTextString = "radio-tnp.com";
+    const staticText = new fabric.Text(staticTextString, {
+      fontSize: 18,
+      fill: "#ffffff",
+      fontFamily: "Alte Haas Grotesk",
+      // Rotate text 90 degrees clockwise
+      angle: 90,
+      // Manually set the position; adjust these values as needed to align properly
+      left: 535, // Adjust the value '10' to position it closer to or further from the right edge
+      top: 45, // Adjust the value '30' to position it closer to or further from the date/time string
+    });
+
+    // Since we're manually setting the position, we don't need to calculate width/height adjustments
+    canvas.add(staticText);
 
     canvas.renderAll();
-  }, [text, date, overlayOpacity, imageLoaded]);
+
+    // ... (rest of your code remains unchanged)
+  }, [
+    imageFile,
+    mainText,
+    subText,
+    date,
+    startHour,
+    startMinute,
+    endHour,
+    endMinute,
+  ]);
 
   const handleDownload = () => {
     const canvas = canvasInstance.current;
     if (!canvas) return;
-
     const dataURL = canvas.toDataURL({
       format: "png",
       quality: 1.0,
     });
-
     const link = document.createElement("a");
     link.href = dataURL;
     link.download = "thumbnail.png";
@@ -155,14 +220,15 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
   };
 
   return (
-    <div>
-      <canvas ref={canvasRef} width="500" height="500"></canvas>
-      <Button variant="outline" onClick={handleDownload}>
+    <div className="flex flex-col items-">
+      <canvas ref={canvasRef} width="550" height="550" className=""></canvas>
+      <Button
+        variant="outline"
+        onClick={handleDownload}
+        className="mt-5 w-36 mx-auto shadow-xl"
+      >
         Download Image
       </Button>
-      {/* <OpacitySlider
-        updateOpacity={(opacity: number) => setOverlayOpacity(opacity)}
-      /> */}
     </div>
   );
 };

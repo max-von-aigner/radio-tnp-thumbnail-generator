@@ -16,13 +16,13 @@ const SubTitleInput: React.FC<SubTitleInputProps> = ({ text, setText }) => {
 
   return (
     <div>
-      <Label htmlFor="show-name">Show Name</Label>
+      <Label htmlFor="sub-title">Subtitle</Label>
       <Input
-        id="show-name"
+        id="sub-title"
         type="text"
         value={text}
         onChange={handleTextChange}
-        placeholder="Show Name"
+        placeholder="w/ Alexandra Marr"
       />
     </div>
   );

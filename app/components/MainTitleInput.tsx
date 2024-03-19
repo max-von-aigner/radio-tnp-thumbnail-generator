@@ -24,7 +24,7 @@ const ShowTitleInput: React.FC<ShowTitleInputProps> = ({ text, setText }) => {
         type="text"
         value={text}
         onChange={handleTextChange}
-        placeholder="Show Name"
+        placeholder="BETWEEN US"
       />
     </div>
   );

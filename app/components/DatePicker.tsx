@@ -27,7 +27,9 @@ export function DatePicker({ setDateExternal }: DatePickerProps) {
   }, [date, setDateExternal]);
   return (
     <div className="flex flex-col">
-      <Label htmlFor="date">Date</Label>
+      <Label htmlFor="date" className="pb-1">
+        Date
+      </Label>
       <Popover>
         <PopoverTrigger asChild>
           <Button
