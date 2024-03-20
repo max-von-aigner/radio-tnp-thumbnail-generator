@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 import { format } from "date-fns";
