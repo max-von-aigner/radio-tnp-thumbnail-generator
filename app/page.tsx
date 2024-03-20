@@ -1,5 +1,4 @@
 import Logo from "./components/Logo";
-import ImageUpload from "./components/ImageUpload";
 import ThumbnailGenerator from "./components/ThumbnailGenerator";
 
 export default function Home() {

@@ -52,6 +52,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ setImageFile }) => {
         type="file"
         onChange={handleFileChange}
         accept="image/*"
+        title="Upload Image"
+        placeholder=""
       />
     </div>
   );
