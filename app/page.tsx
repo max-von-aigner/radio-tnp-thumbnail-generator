@@ -1,5 +1,12 @@
 import Logo from "./components/Logo";
-import ThumbnailGenerator from "./components/ThumbnailGenerator";
+// import ThumbnailGenerator from "./components/ThumbnailGenerator";
+import dynamic from "next/dynamic";
+
+// Dynamic import with no SSR
+const ThumbNailGenerator = dynamic(
+  () => import("./components/ThumbnailGenerator"), // Adjust path as necessary
+  { ssr: false }
+);
 
 export default function Home() {
   return (
@@ -8,7 +15,8 @@ export default function Home() {
         <Logo></Logo>
       </div>
       <div className="flex items-center justify-center pt-5 ">
-        <ThumbnailGenerator></ThumbnailGenerator>
+        {/* <ThumbnailGenerator></ThumbnailGenerator> */}
+        <ThumbNailGenerator></ThumbNailGenerator>
       </div>
     </main>
   );
