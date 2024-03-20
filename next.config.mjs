@@ -1,11 +1,13 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-  webpack: (
-    config,
-    { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
-  ) => {
-    config.externals.push({ canvas: "commonjs canvas" });
+  webpack: (config, { isServer }) => {
+    // This example targets avoiding bundling the 'canvas' package
+    // for environments where it's not compatible or needed.
+    if (!isServer) {
+      // Prevent webpack from bundling 'canvas' on the client side
+      config.externals.push({ canvas: "commonjs canvas" });
+    }
     return config;
   },
 };
