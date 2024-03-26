@@ -11,7 +11,7 @@ interface ShowTitleInputProps {
 
 const ShowTitleInput: React.FC<ShowTitleInputProps> = ({ text, setText }) => {
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setText(event.target.value);
+    setText(event.target.value.toUpperCase());
   };
 
   return (
@@ -23,6 +23,7 @@ const ShowTitleInput: React.FC<ShowTitleInputProps> = ({ text, setText }) => {
         value={text}
         onChange={handleTextChange}
         placeholder="BETWEEN US"
+        accept=""
       />
     </div>
   );
