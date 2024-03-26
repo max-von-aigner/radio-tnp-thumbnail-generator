@@ -11,7 +11,7 @@ interface SubTitleInputProps {
 
 const SubTitleInput: React.FC<SubTitleInputProps> = ({ text, setText }) => {
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setText(event.target.value);
+    setText(event.target.value.toUpperCase());
   };
 
   return (
