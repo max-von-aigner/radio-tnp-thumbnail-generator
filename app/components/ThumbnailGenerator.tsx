@@ -50,7 +50,15 @@ const ThumbnailGenerator = () => {
           ></TimeInput>
         </Card>
       </div>
-      <div className="flex-2 w-[550px] h-[550px] shadow-xl bg-stone-200">
+      <div className="flex-2 w-[500px] h-[500px] shadow-xl bg-stone-200 text-center relative">
+        <span
+          className="text-3xl items-center absolute top-1/2 mx-auto left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-stone-500"
+          style={{
+            fontFamily: "Alte Haas Grotesk",
+          }}
+        >
+          Upload an Image
+        </span>
         {imageFile && (
           <ThumbnailCanvas
             imageFile={imageFile}
