@@ -19,7 +19,7 @@ interface DatePickerProps {
 
 // Add props to DatePicker for lifting state up
 export function DatePicker({ setDateExternal }: DatePickerProps) {
-  const [date, setDate] = React.useState<Date>();
+  const [date, setDate] = React.useState<Date>(new Date());
 
   React.useEffect(() => {
     setDateExternal(date); // Lift state up whenever date changes
@@ -46,7 +46,7 @@ export function DatePicker({ setDateExternal }: DatePickerProps) {
           <Calendar
             mode="single"
             selected={date}
-            onSelect={setDate}
+            onSelect={(day: Date | undefined) => setDate(day || new Date())}
             initialFocus
           />
         </PopoverContent>

@@ -53,10 +53,6 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
     });
     canvasInstance.current = canvas;
 
-    // Directly set the style on the canvas element to ensure it's applied
-    canvasRef.current.style.width = "550px";
-    canvasRef.current.style.height = "550px";
-
     // Load and set the image background
     const objectURL = URL.createObjectURL(imageFile);
     fabric.Image.fromURL(
@@ -95,15 +91,15 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
     canvas.getObjects("text").forEach((obj) => canvas.remove(obj));
 
     // Calculate positions based on whether subText is provided
-    const mainTextTop = canvas.getHeight() - (subText ? 144 : 100); // Move main text up if subText is provided
-    const subTextTop = canvas.getHeight() - 80; // Subtext position
+    const mainTextTop = canvas.getHeight() - (subText ? 60 : 40); // Move main text up if subText is provided
+    const subTextTop = canvas.getHeight() - 30; // Subtext position
 
     // Load and add the logo SVG at the top left
     fabric.Image.fromURL("tnpLogo.svg", (img) => {
-      img.scaleToWidth(180); // Adjust as needed
+      img.scaleToWidth(80); // Adjust as needed
       img.set({
-        left: 40,
-        top: 40,
+        left: 20,
+        top: 20,
       });
       canvas.add(img);
     });
@@ -111,10 +107,10 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
     // Add main text at the bottom left
     if (mainText) {
       const textObj = new fabric.Text(mainText, {
-        fontSize: 60,
+        fontSize: 27,
         fill: "#fff",
         fontFamily: "Alte Haas Grotesk",
-        left: 40,
+        left: 17,
         top: mainTextTop, // Adjust according to your needs
       });
       canvas.add(textObj);
@@ -123,27 +119,27 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
     // Add sub text at the bottom left
     if (subText) {
       const textObj = new fabric.Text(subText, {
-        fontSize: 36,
+        fontSize: 16,
         fill: "#fff",
         fontFamily: "Alte Haas Grotesk",
-        left: 40,
+        left: 17,
         top: subTextTop, // Adjust according to your needs
       });
       canvas.add(textObj);
     }
 
     // Positioning logic for Date, Time, and Separator
-    const rightPadding = 40; // Space from the right edge
+    const rightPadding = 18; // Space from the right edge
     let lastTextRightPosition = canvas.getWidth() - rightPadding;
 
     // Time Text
     if (startHour && startMinute && endHour && endMinute) {
-      const timeString = `${startHour}:${startMinute}-${endHour}:${endMinute}`;
+      const timeString = `${startHour}:${startMinute}—${endHour}:${endMinute}`;
       const timeText = new fabric.Text(timeString, {
-        fontSize: 36,
+        fontSize: 16,
         fill: "#ffffff",
         fontFamily: "Alte Haas Grotesk",
-        top: 40, // Adjust top position as needed
+        top: 15, // Adjust top position as needed
       });
       canvas.add(timeText);
       timeText.set({
@@ -154,10 +150,10 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
 
     // Separator
     const separator = new fabric.Text("|", {
-      fontSize: 36,
+      fontSize: 16,
       fill: "#ffffff",
       fontFamily: "Alte Haas Grotesk",
-      top: 40, // Align vertically with the date and time
+      top: 15, // Align vertically with the date and time
     });
     canvas.add(separator);
     separator.set({
@@ -167,12 +163,13 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
 
     // Date
     if (date) {
-      const formattedDate = format(date, "dd.MM");
-      const dateText = new fabric.Text(formattedDate, {
-        fontSize: 36,
+      const formattedDateForCanvas = format(date, "dd.MM");
+
+      const dateText = new fabric.Text(formattedDateForCanvas, {
+        fontSize: 16,
         fill: "#ffffff",
         fontFamily: "Alte Haas Grotesk",
-        top: 40, // Align vertically with the time
+        top: 15, // Align vertically with the time
       });
       canvas.add(dateText);
       dateText.set({
@@ -183,22 +180,20 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
     // Static text below the date and time, rotated 90 degrees counter-clockwise
     const staticTextString = "radio-tnp.com";
     const staticText = new fabric.Text(staticTextString, {
-      fontSize: 36,
+      fontSize: 16,
       fill: "#ffffff",
       fontFamily: "Alte Haas Grotesk",
       // Rotate text 90 degrees clockwise
       angle: 90,
       // Manually set the position; adjust these values as needed to align properly
-      left: 1170, // Adjust the value '10' to position it closer to or further from the right edge
-      top: 90, // Adjust the value '30' to position it closer to or further from the date/time string
+      left: 486, // Adjust this value to position it closer to or further from the right edge
+      top: 37, // Adjust this value to position it closer to or further from the date/time string
     });
 
     // Since we're manually setting the position, we don't need to calculate width/height adjustments
     canvas.add(staticText);
 
     canvas.renderAll();
-
-    // ... (rest of your code remains unchanged)
   }, [
     imageFile,
     mainText,
@@ -211,15 +206,18 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
   ]);
 
   const handleDownload = () => {
+    const formattedDateForFileName = date ? format(date, "dd-MM-yyyy") : "";
+    const fileName = mainText || "thumbnail";
     const canvas = canvasInstance.current;
     if (!canvas) return;
     const dataURL = canvas.toDataURL({
       format: "png",
       quality: 1.0,
+      multiplier: 4,
     });
     const link = document.createElement("a");
     link.href = dataURL;
-    link.download = "thumbnail.png";
+    link.download = `${fileName}-${formattedDateForFileName}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -229,9 +227,9 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
     <div className="flex flex-col">
       <canvas
         ref={canvasRef}
-        width="1200"
-        height="1200"
-        style={{ width: "550px", height: "550px" }}
+        width="500"
+        height="500"
+        style={{ width: "500px", height: "500px" }}
       ></canvas>
       <Button
         variant="outline"
