@@ -27,6 +27,7 @@ interface ThumbnailCanvasProps {
   startMinute: string;
   endHour: string;
   endMinute: string;
+  shadowOpacity: number;
 }
 
 const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
@@ -38,9 +39,12 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
   startMinute,
   endHour,
   endMinute,
+  shadowOpacity,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasInstance = useRef<fabric.Canvas | null>(null);
+  const [isShadowOverlayAdded, setIsShadowOverlayAdded] = useState(false);
+
   const fontLoaded = useFontLoaded(
     "Alte Haas Grotesk",
     "/fonts/AlteHaasGroteskBold.ttf"
@@ -71,6 +75,22 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
         canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
           crossOrigin: "anonymous",
         });
+        if (!isShadowOverlayAdded) {
+          const shadowOverlay = new fabric.Rect({
+            left: 0,
+            top: 0,
+            fill: "rgba(0,0,0,1)",
+            width: canvas.getWidth(),
+            height: canvas.getHeight(),
+            selectable: false,
+            evented: false,
+            opacity: shadowOpacity, // Set initial opacity
+          });
+          canvas.add(shadowOverlay);
+          canvas.sendToBack(shadowOverlay);
+          setIsShadowOverlayAdded(true); // Indicate that the shadow overlay has been added
+        }
+
         URL.revokeObjectURL(objectURL);
       },
       { crossOrigin: "anonymous" }
@@ -81,7 +101,19 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
         canvasInstance.current.dispose();
       }
     };
-  }, [fontLoaded, imageFile]);
+  }, [fontLoaded, imageFile]); // include isShadowOverlayAdded in dependencies
+
+  useEffect(() => {
+    if (canvasInstance.current && isShadowOverlayAdded) {
+      const shadowOverlay = canvasInstance.current
+        .getObjects()
+        .find((obj) => obj.type === "rect");
+      if (shadowOverlay) {
+        shadowOverlay.set({ opacity: shadowOpacity });
+        canvasInstance.current.renderAll();
+      }
+    }
+  }, [shadowOpacity, isShadowOverlayAdded]);
 
   useEffect(() => {
     if (!canvasInstance.current) return;

@@ -8,19 +8,20 @@ import { DatePicker } from "../components/DatePicker";
 import TimeInput from "../components/TimeInput";
 import SubTitleInput from "../components/SubTitleInput";
 import { Card } from "@/components/ui/card";
+import OpacitySlider from "./OpacitySlider";
 
 const ThumbnailGenerator = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
-  //   const [text, setText] = useState<string>(" ");
 
   const [mainText, setMainText] = useState<string>("");
   const [subText, setSubText] = useState<string>("");
-  // In ThumbnailGenerator component
+
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [startHour, setStartHour] = useState("00");
   const [startMinute, setStartMinute] = useState("00");
   const [endHour, setEndHour] = useState("00");
   const [endMinute, setEndMinute] = useState("00");
+  const [shadowOpacity, setShadowOpacity] = useState(0.5);
 
   return (
     <div className="flex space-x-10">
@@ -32,12 +33,12 @@ const ThumbnailGenerator = () => {
           <ShowTitleInput text={mainText} setText={setMainText} />
           {/* Component to display the thumbnail canvas */}
           <SubTitleInput text={subText} setText={setSubText} />
-
           <DatePicker
             setDateExternal={
               setSelectedDate as (date: Date | undefined) => void
             }
           ></DatePicker>
+
           <TimeInput
             startHour={startHour}
             setStartHour={setStartHour}
@@ -48,6 +49,11 @@ const ThumbnailGenerator = () => {
             endMinute={endMinute}
             setEndMinute={setEndMinute}
           ></TimeInput>
+
+          <OpacitySlider
+            onChange={(value: number) => setShadowOpacity(value)}
+            value={shadowOpacity}
+          ></OpacitySlider>
         </Card>
       </div>
       <div className="flex-2 w-[500px] h-[500px] shadow-xl bg-stone-200 text-center relative">
@@ -59,6 +65,7 @@ const ThumbnailGenerator = () => {
         >
           Upload an Image
         </span>
+
         {imageFile && (
           <ThumbnailCanvas
             imageFile={imageFile}
@@ -69,6 +76,7 @@ const ThumbnailGenerator = () => {
             startMinute={startMinute}
             endHour={endHour}
             endMinute={endMinute}
+            shadowOpacity={shadowOpacity}
           />
         )}
       </div>

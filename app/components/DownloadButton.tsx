@@ -1,3 +1,5 @@
+// not hooked up to the rest of the app yet
+
 import React from "react";
 
 interface DownloadButtonProps {
