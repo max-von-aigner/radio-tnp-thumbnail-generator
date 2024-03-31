@@ -21,7 +21,7 @@ const ThumbnailGenerator = () => {
   const [startMinute, setStartMinute] = useState("00");
   const [endHour, setEndHour] = useState("00");
   const [endMinute, setEndMinute] = useState("00");
-  const [shadowOpacity, setShadowOpacity] = useState(0.5);
+  const [shadowOpacity, setShadowOpacity] = useState(0);
 
   return (
     <div className="flex space-x-10">
