@@ -36,16 +36,20 @@ import ShowNameInput from "./MainTitleInput";
 
 interface ImageUploadProps {
   setImageFile: (file: File | null) => void; // setImageFile is a function taking File | null.
+  className?: string;
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ setImageFile }) => {
+const ImageUpload: React.FC<ImageUploadProps> = ({
+  setImageFile,
+  className,
+}) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
     setImageFile(file);
   };
 
   return (
-    <div>
+    <div className={className}>
       <Label htmlFor="picture">Image</Label>
       <Input
         id="picture"

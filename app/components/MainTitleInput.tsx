@@ -4,12 +4,12 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface ShowTitleInputProps {
+interface MainTitleInputProps {
   text: string;
   setText: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ShowTitleInput: React.FC<ShowTitleInputProps> = ({ text, setText }) => {
+const MainTitleInput: React.FC<MainTitleInputProps> = ({ text, setText }) => {
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setText(event.target.value.toUpperCase());
   };
@@ -29,4 +29,4 @@ const ShowTitleInput: React.FC<ShowTitleInputProps> = ({ text, setText }) => {
   );
 };
 
-export default ShowTitleInput;
+export default MainTitleInput;

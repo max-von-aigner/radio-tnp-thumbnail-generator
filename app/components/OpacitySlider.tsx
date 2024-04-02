@@ -5,11 +5,16 @@ import { Label } from "@/components/ui/label";
 interface OpacitySliderProps {
   value: number; // The current value of the slider
   onChange: (value: number) => void; // Function to call when the value changes
+  className?: string;
 }
 
-const OpacitySlider: React.FC<OpacitySliderProps> = ({ value, onChange }) => {
+const OpacitySlider: React.FC<OpacitySliderProps> = ({
+  value,
+  onChange,
+  className,
+}) => {
   return (
-    <div className="w-full flex flex-col">
+    <div className={`w-full flex flex-col ${className}`}>
       <Label className="pb-2">Shadow</Label>
 
       <Slider
@@ -20,7 +25,7 @@ const OpacitySlider: React.FC<OpacitySliderProps> = ({ value, onChange }) => {
         onValueChange={(valueArray) => onChange(valueArray[0])} // Directly use onChange prop
         orientation="horizontal"
         defaultValue={[0]}
-        className="min-w-80 bg-gray-800  rounded-lg cursor-pointer w-20"
+        className="w-full bg-gray-800  rounded-lg cursor-pointer"
       ></Slider>
 
       {/* <input

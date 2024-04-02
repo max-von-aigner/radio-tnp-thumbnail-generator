@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import ImageUpload from "../components/ImageUpload";
 import ThumbnailCanvas from "../components/ThumbnailCanvas";
-import ShowTitleInput from "../components/MainTitleInput";
+import MainTitleInput from "../components/MainTitleInput";
 import { DatePicker } from "../components/DatePicker";
 import TimeInput from "../components/TimeInput";
 import SubTitleInput from "../components/SubTitleInput";
@@ -24,39 +24,37 @@ const ThumbnailGenerator = () => {
   const [shadowOpacity, setShadowOpacity] = useState(0);
 
   return (
-    <div className="flex space-x-10">
-      <div className="flex flex-col  flex-1">
-        <Card className="space-y-5 p-4 bg-stone-100 shadow-2xl">
-          {/* Component to upload an image */}
-          <ImageUpload setImageFile={setImageFile} />
-          {/* Component to input text */}
-          <ShowTitleInput text={mainText} setText={setMainText} />
-          {/* Component to display the thumbnail canvas */}
-          <SubTitleInput text={subText} setText={setSubText} />
-          <DatePicker
-            setDateExternal={
-              setSelectedDate as (date: Date | undefined) => void
-            }
-          ></DatePicker>
+    <div className="flex flex-col w-60 lg:w-full lg:flex-row lg:space-x-10">
+      {/* <div className="flex flex-col  lg:flex-1" id=""> */}
+      <Card className=" w-80 lg:w-96 space-y-5 p-4 bg-stone-100 shadow-2xl  mx-auto">
+        {/* Component to upload an image */}
+        <ImageUpload setImageFile={setImageFile} />
+        {/* Component to input text */}
+        <MainTitleInput text={mainText} setText={setMainText} />
+        {/* Component to display the thumbnail canvas */}
+        <SubTitleInput text={subText} setText={setSubText} />
+        <DatePicker
+          setDateExternal={setSelectedDate as (date: Date | undefined) => void}
+        ></DatePicker>
 
-          <TimeInput
-            startHour={startHour}
-            setStartHour={setStartHour}
-            startMinute={startMinute}
-            setStartMinute={setStartMinute}
-            endHour={endHour}
-            setEndHour={setEndHour}
-            endMinute={endMinute}
-            setEndMinute={setEndMinute}
-          ></TimeInput>
+        <TimeInput
+          startHour={startHour}
+          setStartHour={setStartHour}
+          startMinute={startMinute}
+          setStartMinute={setStartMinute}
+          endHour={endHour}
+          setEndHour={setEndHour}
+          endMinute={endMinute}
+          setEndMinute={setEndMinute}
+        ></TimeInput>
 
-          <OpacitySlider
-            onChange={(value: number) => setShadowOpacity(value)}
-            value={shadowOpacity}
-          ></OpacitySlider>
-        </Card>
-      </div>
-      <div className="flex-2 w-[500px] h-[500px] shadow-xl bg-stone-200 text-center relative">
+        <OpacitySlider
+          onChange={(value: number) => setShadowOpacity(value)}
+          value={shadowOpacity}
+        ></OpacitySlider>
+      </Card>
+      {/* </div> */}
+      <div className="flex-2 h-[300px] w-[300px] lg:w-[500px] lg:h-[500px]  shadow-xl bg-stone-200 text-center relative">
         <span
           className="text-3xl items-center absolute top-1/2 mx-auto left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-stone-500"
           style={{
