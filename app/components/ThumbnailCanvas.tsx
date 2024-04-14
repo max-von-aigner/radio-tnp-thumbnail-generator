@@ -166,7 +166,7 @@ const ThumbnailCanvas: React.FC<ThumbnailCanvasProps> = ({
 
     // Time Text
     if (startHour && startMinute && endHour && endMinute) {
-      const timeString = `${startHour}:${startMinute}—${endHour}:${endMinute}`;
+      const timeString = `${startHour}:${startMinute}-${endHour}:${endMinute}`;
       const timeText = new fabric.Text(timeString, {
         fontSize: 16,
         fill: "#ffffff",
